@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BOI COBOL Banking Simulator</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="toolbar" aria-label="Simulation controls">
+        <div>
+          <h1>BOI Live Ecosystem</h1>
+          <p id="statusText">Idle</p>
+        </div>
+        <div class="actions">
+          <button id="startBtn" class="primary">Attach Dashboard</button>
+          <button id="stopBtn" disabled>Terminal Managed</button>
+        </div>
+      </section>
+
+      <section class="settings" aria-label="Simulation settings">
+        <label>
+          Accounts
+          <input id="accountsInput" type="number" min="1000" max="100000" step="1000" value="10000" />
+        </label>
+        <label>
+          Transactions
+          <input id="txnsInput" type="number" min="100000" step="100000" value="1000000" />
+        </label>
+        <label>
+          Simulation Speed
+          <select id="speedInput">
+            <option value="1x">1x</option>
+            <option value="10x">10x</option>
+            <option value="100x" selected>100x</option>
+            <option value="1000x">1000x</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="metrics" aria-live="polite">
+        <article>
+          <span>Total Accounts</span>
+          <strong id="accounts">0</strong>
+        </article>
+        <article>
+          <span>Total Transactions</span>
+          <strong id="transactions">0</strong>
+        </article>
+        <article>
+          <span>Transactions Per Second</span>
+          <strong id="tps">0</strong>
+        </article>
+        <article>
+          <span>Fraud Events</span>
+          <strong id="fraud">0</strong>
+        </article>
+        <article>
+          <span>Mule Accounts</span>
+          <strong id="mules">0</strong>
+        </article>
+        <article>
+          <span>Rejected Transactions</span>
+          <strong id="rejected">0</strong>
+        </article>
+        <article>
+          <span>Neo4j Nodes</span>
+          <strong id="neoNodes">0</strong>
+        </article>
+        <article>
+          <span>Neo4j Edges</span>
+          <strong id="neoEdges">0</strong>
+        </article>
+      </section>
+
+      <section class="graph" aria-label="Live graph">
+        <canvas id="graphCanvas" width="1000" height="280"></canvas>
+      </section>
+
+      <section class="details">
+        <div>
+          <span>Runner</span>
+          <strong id="pid">-</strong>
+        </div>
+        <div>
+          <span>SQLite database</span>
+          <strong id="database">database/ecosystem.db</strong>
+        </div>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

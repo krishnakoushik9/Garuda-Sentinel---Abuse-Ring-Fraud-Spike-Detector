@@ -1,0 +1,137 @@
+*> *****************************************************************
+*> PROGRAM-ID:  SENTINEL
+*> AUTHOR:      GARUDA SENTINEL DEVELOPMENT TEAM (BANK OF INDIA)
+*> DATE:        JUNE 2026
+*> PURPOSE:     CORE BANKING SENTINEL AGENT (CBSA)
+*>              DYNAMIC KAFKA INTEGRATED PRE-SETTLEMENT INTERCEPT
+*> *****************************************************************
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. SENTINEL.
+       
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       
+*> DYNAMIC RISK INTELLIGENCE PACKET (INGESTED FROM KAFKA EVENT STREAM)
+       01  INPUT-RECORD.
+           05  IN-ACCOUNT           PIC X(10)  VALUE SPACES.
+           05  IN-CLUSTER           PIC X(10)  VALUE SPACES.
+           05  IN-RISK-SCORE        PIC X(3)   VALUE "000".
+           05  IN-VELOCITY-SCORE    PIC X(3)   VALUE "000".
+           05  IN-CONTAM-SCORE      PIC X(3)   VALUE "000".
+           05  IN-AMOUNT            PIC X(10)  VALUE "0000000.00".
+           05  IN-CHANNEL           PIC X(5)   VALUE SPACES.
+
+*> NUMERIC PARSED VALUES FOR EVALUATION
+       01  PARSED-VARIABLES.
+           05  NUM-RISK-SCORE       PIC 9(3)   VALUE 0.
+           05  NUM-VELOCITY-SCORE   PIC 9(3)   VALUE 0.
+           05  NUM-CONTAM-SCORE     PIC 9(3)   VALUE 0.
+           05  NUM-AMOUNT           PIC 9(7)V99 VALUE 0.00.
+
+*> SYSTEM CONTROL LIMITS AND THRESHOLDS
+       01  SYSTEM-LIMITS.
+           05  CRITICAL-CONTAM      PIC 9(2)   VALUE 75.
+           05  HIGH-RISK            PIC 9(2)   VALUE 70.
+           05  ELEVATED-VELOCITY    PIC 9(2)   VALUE 60.
+
+*> SENTINEL AUTHRORIZATION DECISION BLOCK
+       01  DECISION-BLOCK.
+           05  DECISION-ACTION      PIC X(10)  VALUE "ALLOW".
+           05  DECISION-CODE        PIC X(4)   VALUE "A000".
+           05  DECISION-REASON      PIC X(50)  VALUE "APPROVED BY CBS ENGINE".
+
+*> COPYBOOK MOCK GENERATOR VARIABLES
+       01  HEX-STRINGS.
+           05  HEX-BUFFER           PIC X(80)  VALUE SPACES.
+
+       PROCEDURE DIVISION.
+       0000-MAIN-FLOW.
+           DISPLAY "================================================".
+           DISPLAY "⚡ [CBSA] BOOTING CORE BANKING SENTINEL AGENT".
+           
+           ACCEPT INPUT-RECORD FROM SYSIN.
+           
+           DISPLAY "⚡ [CBSA] INGESTED RISK TELEMETRY PACKET: " INPUT-RECORD.
+           
+           *> PARSE PACKET VALUES FROM EXTRACTED STRING
+           UNSTRING INPUT-RECORD DELIMITED BY SPACES OR ","
+               INTO IN-ACCOUNT
+                    IN-CLUSTER
+                    IN-RISK-SCORE
+                    IN-VELOCITY-SCORE
+                    IN-CONTAM-SCORE
+                    IN-AMOUNT
+                    IN-CHANNEL.
+           
+           *> CONVERT STRINGS TO NUMERICS
+           MOVE FUNCTION NUMVAL(IN-RISK-SCORE) TO NUM-RISK-SCORE.
+           MOVE FUNCTION NUMVAL(IN-VELOCITY-SCORE) TO NUM-VELOCITY-SCORE.
+           MOVE FUNCTION NUMVAL(IN-CONTAM-SCORE) TO NUM-CONTAM-SCORE.
+           MOVE FUNCTION NUMVAL(IN-AMOUNT) TO NUM-AMOUNT.
+
+           PERFORM 1000-EVALUATE-DECISION.
+           PERFORM 2000-FORMAT-HEX-COPYBOOK.
+           
+           DISPLAY "================================================".
+           DISPLAY "DECISION_RESULT: " DECISION-ACTION " " 
+                   DECISION-CODE " " 
+                   HEX-BUFFER " "
+                   DECISION-REASON.
+           
+           GOBACK.
+
+       1000-EVALUATE-DECISION.
+           DISPLAY "🔍 [CBSA] AUDITING LIVE TRANSACTION RULES IN CBS PATH".
+           DISPLAY "🔍 [CBSA] SENDER PROFILE RISK: " NUM-RISK-SCORE "%".
+           DISPLAY "🔍 [CBSA] CLUSTER CONTAMINATION: " NUM-CONTAM-SCORE "%".
+           DISPLAY "🔍 [CBSA] TRANSACTION VELOCITY: " NUM-VELOCITY-SCORE "%".
+           
+           IF NUM-RISK-SCORE >= HIGH-RISK OR 
+              NUM-CONTAM-SCORE >= CRITICAL-CONTAM
+               MOVE "HOLD" TO DECISION-ACTION
+               MOVE "E095" TO DECISION-CODE
+               MOVE "CRITICAL MULE RISK OR NETWORK CONTAMINATION" 
+                   TO DECISION-REASON
+           ELSE
+               IF NUM-VELOCITY-SCORE >= ELEVATED-VELOCITY AND 
+                  NUM-AMOUNT >= 100000.00
+                   MOVE "FREEZE" TO DECISION-ACTION
+                   MOVE "E097" TO DECISION-CODE
+                   MOVE "HIGH VELOCITY ATTEMPTED OUTFLOW LIMIT EXCEEDED"
+                       TO DECISION-REASON
+               ELSE
+                   IF NUM-RISK-SCORE >= 50 AND NUM-VELOCITY-SCORE >= 50
+                       MOVE "HOLD" TO DECISION-ACTION
+                       MOVE "E075" TO DECISION-CODE
+                       MOVE "SUSPICIOUS TRANS ACTIVITY - PENDING APPROVAL"
+                           TO DECISION-REASON
+                   ELSE
+                       MOVE "ALLOW" TO DECISION-ACTION
+                       MOVE "A000" TO DECISION-CODE
+                       MOVE "APPROVED BY CBS ENGINE" TO DECISION-REASON
+                   END-IF
+               END-IF
+           END-IF.
+           
+           DISPLAY "🚫 [CBSA] FINAL DECISION RESOLVED: " DECISION-ACTION.
+           DISPLAY "🚫 [CBSA] DECISION REASON: " DECISION-REASON.
+           .
+
+       2000-FORMAT-HEX-COPYBOOK.
+           IF DECISION-ACTION = "ALLOW"
+               MOVE "0100F2C141434330303030303039FF41434330303030303039FF000000030D4041303030" 
+                   TO HEX-BUFFER
+           ELSE
+               IF DECISION-ACTION = "FREEZE"
+                   MOVE "0100F2C1414343303030383630FF414343303030383630FF0000002DC6C045303937"
+                       TO HEX-BUFFER
+               ELSE
+                   MOVE "0100F2C14E6F74204D656E74696F414343303037303336FF0000001E848045303935"
+                       TO HEX-BUFFER
+               END-IF
+           END-IF.
+           DISPLAY "🔒 [HEX] COPYBOOK PACKET CONSTRUCTED: " HEX-BUFFER.
+           .

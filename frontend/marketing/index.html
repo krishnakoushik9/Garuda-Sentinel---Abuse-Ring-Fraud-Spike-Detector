@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRAUD INTELLIGENCE v2.0 | IIT Hyderabad x Bank of India</title>
+    <style>
+        :root {
+            --win-bg: #c0c0c0;
+            --win-border-light: #ffffff;
+            --win-border-dark: #808080;
+            --cyber-green: #00ff41;
+            --cyber-black: #0a0a0f;
+            --cyber-glow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--cyber-black);
+            color: var(--cyber-green);
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        /* Matrix Background */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            z-index: -1;
+        }
+
+        /* CRT Overlay */
+        .crt::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 100;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Hero ASCII Section */
+        header {
+            text-align: center;
+            padding: 4rem 0;
+            text-shadow: var(--cyber-glow);
+        }
+
+        pre {
+            font-size: 10px;
+            line-height: 1;
+            margin-bottom: 1rem;
+            display: inline-block;
+            text-align: left;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background: var(--cyber-green);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Ticker */
+        .ticker-wrap {
+            width: 100%;
+            background: rgba(0, 255, 65, 0.1);
+            border-top: 1px solid var(--cyber-green);
+            border-bottom: 1px solid var(--cyber-green);
+            padding: 0.5rem 0;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        .ticker {
+            white-space: nowrap;
+            display: inline-block;
+            animation: ticker 30s linear infinite;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Win98 Windows */
+        .window {
+            background: var(--win-bg);
+            border: 2px solid;
+            border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+            padding: 2px;
+            margin-bottom: 2rem;
+            color: black;
+        }
+
+        .window-title {
+            background: #000080;
+            color: white;
+            padding: 3px 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--win-bg);
+            border: 1px solid black;
+            font-size: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .window-content {
+            padding: 1rem;
+            border: 1px inset var(--win-border-dark);
+            background: white;
+            min-height: 100px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        /* Feature Card Modern Layer */
+        .feature-card {
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.5rem;
+            color: #000080;
+        }
+
+        /* Architecture Section */
+        .arch-section {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        /* CTA Button */
+        .cta-container {
+            text-align: center;
+            margin: 4rem 0;
+        }
+
+        .cta-btn {
+            background: var(--cyber-green);
+            color: var(--cyber-black);
+            padding: 1.5rem 3rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            border: 4px solid var(--win-border-light);
+            box-shadow: 5px 5px 0px var(--win-border-dark);
+            display: inline-block;
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+
+        .cta-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--win-border-dark);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid #333;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+    </style>
+</head>
+<body class="crt">
+    <canvas id="matrix"></canvas>
+
+    <div class="container">
+        <header>
+            <pre>
+███████╗██████╗  █████╗ ██╗   ██╗██████╗     ██╗███╗   ██╗████████╗███████╗██╗     ██╗     ██╗ ██████╗ ███████╗███╗   ██╗ ██████╗ ███████╗
+██╔════╝██╔══██╗██╔══██╗██║   ██║██╔══██╗    ██║████╗  ██║╚══██╔══╝██╔════╝██║     ██║     ██║██╔════╝ ██╔════╝████╗  ██║██╔════╝ ██╔════╝
+█████╗  ██████╔╝███████║██║   ██║██║  ██║    ██║██╔██╗ ██║   ██║   █████╗  ██║     ██║     ██║██║  ███╗█████╗  ██╔██╗ ██║██║      █████╗  
+██╔══╝  ██╔══██╗██╔══██║██║   ██║██║  ██║    ██║██║╚██╗██║   ██║   ██╔══╝  ██║     ██║     ██║██║   ██║██╔══╝  ██║╚██╗██║██║      ██╔══╝  
+██║     ██║  ██║██║  ██║╚██████╔╝██████╔╝    ██║██║ ╚████║   ██║   ███████╗███████╗███████╗██║╚██████╔╝███████╗██║ ╚████║╚██████╗ ███████╗
+╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝     ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝╚══════╝╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝
+                                                                                                                   v2.0 [BUILD 2026.05]
+            </pre>
+            <div>SYSTEM READY_ <span class="cursor"></span></div>
+        </header>
+
+        <div class="ticker-wrap">
+            <div class="ticker">
+                LIVE SYSTEM STATUS: 100,000 ACCOUNTS MONITORED // MULE DETECTION ACTIVE // GRAPH INTELLIGENCE ONLINE // KAFKA STREAMING ENGAGED // LLM AGENTS STANDING BY //
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="window feature-card">
+                <div class="window-title">
+                    <span>COBOL_CORE.SYS</span>
+                    <div class="window-controls">
+                        <div class="control-dot">_</div>
+                        <div class="control-dot">□</div>
+                        <div class="control-dot">x</div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <h3>COBOL Banking Core</h3>
+                    <p>High-performance transaction engine processing millions of entries with legacy-hardened logic and C-bridge integration.</p>
+                </div>
+            </div>
+
+            <div class="window feature-card">
+                <div class="window-title">
+                    <span>GNN_ENGINE.EXE</span>
+                    <div class="window-controls">
+                        <div class="control-dot">_</div>
+                        <div class="control-dot">□</div>
+                        <div class="control-dot">x</div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <h3>Graph Neural Networks</h3>
+                    <p>Mule account detection via GraphSAGE and Louvain community discovery. Identifying fraud rings before they move.</p>
+                </div>
+            </div>
+
+            <div class="window feature-card">
+                <div class="window-title">
+                    <span>XAI_AGENT.BIN</span>
+                    <div class="window-controls">
+                        <div class="control-dot">_</div>
+                        <div class="control-dot">□</div>
+                        <div class="control-dot">x</div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <h3>Explainable AI</h3>
+                    <p>LangGraph multi-agent investigations providing SHAP-driven narratives. Understand exactly WHY a flag was raised.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="window arch-section">
+            <div class="window-title">
+                <span>SYSTEM_ARCHITECTURE.MAP</span>
+            </div>
+            <div class="window-content" style="background: black; color: var(--cyber-green); text-align: left;">
+                <pre style="margin: 0; font-size: 14px;">
+[ COBOL CORE ] ----> [ SQLite ] ----> [ PYTHON ML ] ----> [ NEO4J GRAPH ]
+      |                  |                |                  |
+      +----(C BRIDGE)----+                +----(GNN/XGB)-----+
+                                          |
+                                    [ FASTAPI ] <---- [ LLM AGENTS ]
+                                          |
+                                    [ DASHBOARD ]
+                </pre>
+            </div>
+        </div>
+
+        <div class="cta-container">
+            <a href="../dashboard/index.html" class="cta-btn">LAUNCH ANALYST DASHBOARD →</a>
+        </div>
+
+        <footer>
+            IIT Hyderabad × Bank of India PSB Hackathon 2026 // PS2: AI/ML-Based Suspicious Transaction & Mule Account Detection
+        </footer>
+    </div>
+
+    <script>
+        // Matrix Rain
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%&?@#";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#00ff41";
+            ctx.font = fontSize + "px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 33);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

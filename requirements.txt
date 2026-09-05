@@ -1,0 +1,28 @@
+pandas>=2.2.2
+numpy==1.26.4
+scikit-learn>=1.5.0
+xgboost==2.0.3
+shap==0.45.1
+torch==2.2.0
+torch-geometric==2.5.0
+torch-scatter==2.1.2
+torch-sparse==0.6.18
+torch-cluster==1.6.3
+torch-spline-conv==1.2.2
+redis==5.0.4
+# neo4j>=5.28.0,<6
+kafka-python==2.0.2
+langgraph==0.0.55
+joblib==1.4.2
+# sqlite3-binary==0.1.0; platform_system=='Linux'
+lz4==4.3.3
+fastapi>=0.111.0
+uvicorn>=0.30.1
+aiohttp>=3.9.5
+APScheduler==3.10.4
+evidently>=0.4.0
+river==0.21.0
+python-multipart>=0.0.22,<1.0.0
+psutil>=5.9.0
+PyYAML>=6.0
+# cognee

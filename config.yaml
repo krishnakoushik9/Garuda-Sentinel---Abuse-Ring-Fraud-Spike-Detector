@@ -1,0 +1,10 @@
+swap_manager:
+  enabled: false
+  swappiness: 100         # Hyper-aggressive swapping of non-protected processes (0-100)
+  cache_pressure: 500     # Reclaim filesystem metadata cache extremely aggressively
+
+  protect_ports: [8000, 5173, 7687]
+  protect_names: ["train_models.py", "guard.sh"]
+  swap_threshold_percent: 80
+  monitor_interval_seconds: 60
+  flush_on_train: true

@@ -1,0 +1,53 @@
+name: boi_fraud_app
+description: BOI Fraud Intelligence Platform — Live Hackathon Demo
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Networking
+  http: ^1.2.0
+
+  # Storage
+  shared_preferences: ^2.2.0
+  local_auth: ^2.2.0
+
+  # Fonts
+  google_fonts: ^6.1.0
+
+  # PDF generation
+  pdf: ^3.10.8
+  printing: ^5.12.0
+  path_provider: ^2.1.0
+
+  # Share
+  share_plus: ^7.2.2
+
+  # Animations
+  flutter_animate: ^4.5.0
+
+  # Lottie
+  lottie: ^3.1.0
+
+  cupertino_icons: ^1.0.2
+  postgres: ^3.5.11
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/fonts/
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Regular.ttf

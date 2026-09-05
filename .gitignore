@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+/database/*.db
+/database/*.db-*
+/runtime/
+/exports/
+/build/
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Environment Variables
+.env
+.env.local
+
+# Logs
+*.log
+backend.log
+dashboard.log
+
+# Large Datasets to exclude
+/SETDATA/
+*.db
+*.db-journal
